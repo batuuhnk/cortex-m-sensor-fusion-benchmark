@@ -1,0 +1,11 @@
+configuration,run_ms,speedup_vs_flash
+Flash (code in flash; no FPU; default optimization),189.26,1.0
+Flash + FPU,90.0,2.1
+Flash + I+D cache,150.0,1.3
+RAM (code in RAM),180.0,1.1
+RAM + I+D cache,159.0,1.2
+Flash + O3,136.0,1.4
+Flash + O3 + ICache,90.0,2.1
+Flash + O3 + ICache + FPU,10.0,18.9
+RAM + O3 + ICache + FPU,12.0,15.8
+RAM + O3 + FPU,14.0,13.5

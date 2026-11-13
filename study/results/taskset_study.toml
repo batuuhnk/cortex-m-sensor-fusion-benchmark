@@ -1,0 +1,39 @@
+# Task set of the original study: three loads at their required rates.
+budget = 0.7
+
+[[tasks]]
+name = "Kalman step, 30 states"
+case = "dummy_kf_f32"
+param = "30"
+rate_hz = 200
+
+[[tasks]]
+name = "Kalman step, 15 states"
+case = "dummy_kf_f32"
+param = "15"
+rate_hz = 20
+
+[[tasks]]
+name = "Optimization loop"
+case = "opt_sim_f32"
+param = "1"
+rate_hz = 50
+
+# Candidates. relative_perf = estimated speed per clock cycle relative to the
+# measured Cortex-M33 for this code. These are ESTIMATES made in the study,
+# not measurements; see ../README.md.
+
+[[candidates]]
+name = "STM32U585 (Cortex-M33, measured)"
+clock_mhz = 160
+relative_perf = 1.0
+
+[[candidates]]
+name = "STM32H757, M7 core (estimate)"
+clock_mhz = 480
+relative_perf = 1.96
+
+[[candidates]]
+name = "ADSP-21569 SHARC+ (estimate)"
+clock_mhz = 1000
+relative_perf = 2.76

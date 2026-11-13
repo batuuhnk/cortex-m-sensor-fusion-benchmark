@@ -1,0 +1,10 @@
+load,states,type,fpu,cache,min_run_ms,max_run_ms,activations,note
+dummy_kf,30,double,sp (double in software),off,269.691,271.331,82,
+dummy_kf,15,double,sp (double in software),off,36.667,37.006,225,
+opt_sim,-,double,sp (double in software),off,19.548,19.563,360,
+dummy_kf,30,float,sp,off,80.052,80.359,83,
+dummy_kf,15,float,sp,off,9.921,10.038,82,
+opt_sim,-,float,sp,off,12.725,12.728,272,
+dummy_kf,30,float,disabled,off,188.868,189.996,68,I+D cache on: about 150 ms
+dummy_kf,15,float,disabled,off,23.968,24.175,158,
+opt_sim,-,float,disabled,off,19.585,19.588,199,

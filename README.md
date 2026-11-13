@@ -4,7 +4,7 @@ Choosing a processor for a high-rate sensor fusion system (IMU + GNSS navigation
 
 The method: write **synthetic ("dummy") workloads** that do the same arithmetic as each real-time task of the filter, time each one **in isolation** on a cheap reference Cortex-M board under different FPU, cache and compiler settings, then **project the total load** onto candidate processors with a budget for margin.
 
-This is how I approach processor selection for navigation systems. The repository is an independent, generic implementation of that method: the workloads, rates and examples are not taken from any product.
+This is how I approach processor selection for navigation systems. [`study/`](study/README.md) shows the first application of the method on a Cortex-M33, where FPU, compiler and cache settings together cut the run time of a 30-state Kalman filter load by 18.9x and the measurements decided the processor class. `bench/` is a cleaner, reusable harness written afterwards.
 
 ```
  synthetic workloads          measure on a reference board         project onto candidates
@@ -25,7 +25,8 @@ This is how I approach processor selection for navigation systems. The repositor
 | `tools/parse_log.py` | Turns captured logs into CSV files and a comparison table (speed-up per setting). |
 | `tools/project_load.py` | Projects a task set onto candidate processors. Example: [`example_taskset.toml`](tools/example_taskset.toml). |
 | `docs/` | [Method](docs/01-method.md), [processor classes and selection criteria](docs/02-processor-classes.md), [dual-processor architecture patterns](docs/03-dual-processor-pattern.md). |
-| `results/` | Measurements from my own boards, added per board. |
+| `study/` | [Original study](study/README.md): the dummy Kalman filter loads (MATLAB and C), SystemView measurements on a Cortex-M33, optimization results and the processor projection. |
+| `results/` | Measurements of the `bench/` harness on my own boards, added per board. |
 
 ## Workloads
 

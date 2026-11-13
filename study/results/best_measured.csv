@@ -1,0 +1,4 @@
+case,param,reps,min_cycles,avg_cycles,max_cycles,min_us,cpu_hz,fpu,opt,cache,checksum
+dummy_kf_f32,30,1,1600000,1600000,1600000,10000.000,160000000,sp,see-README,see-README,0
+dummy_kf_f32,15,1,1587360,1587360,1587360,9921.000,160000000,sp,see-README,see-README,0
+opt_sim_f32,1,1,2036000,2036000,2036000,12725.000,160000000,sp,see-README,see-README,0
