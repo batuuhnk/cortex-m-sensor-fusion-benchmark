@@ -8,9 +8,11 @@ Can a 160 MHz Cortex-M33 run the filter task set below at the required rates, an
 
 | Load | Model | Required rate | Time budget per run |
 | --- | --- | ---: | ---: |
-| Kalman step, 30 states | `dummy_kf` with S = 30 | 200 Hz | 5 ms |
-| Kalman step, 15 states | `dummy_kf` with S = 15 | 20 Hz | 50 ms |
-| Optimization loop | `opt_sim` | 50 Hz | 20 ms |
+| Kalman step, 30 states | `dummy_kf` with S = 30 | 100 Hz | 10 ms |
+| Kalman step, 15 states | `dummy_kf` with S = 15 | 10 Hz | 100 ms |
+| Optimization loop | `opt_sim` | 25 Hz | 40 ms |
+
+The rates are representative values chosen for this write-up, not the requirements of a specific product.
 
 ## Loads
 
@@ -65,13 +67,13 @@ From [`optimization_kf30.csv`](../results/cortex-m33-study/optimization_kf30.csv
 | Code in RAM + `-O3` + instruction cache + FPU | 12.0 ms | 15.8x |
 | Code in RAM + `-O3` + FPU | 14.0 ms | 13.5x |
 
-- **The settings multiply, they do not add.** Each one alone gives 1.3x to 2.1x; together they give 18.9x. A likely explanation: at the default optimization level the FPU waits on loads and stores to the stack, and with `-O3` but no FPU every operation is a library call, so only the combination keeps the FPU busy.
+- **Together the settings give far more than the product of their single gains.** Each one alone gives 1.3x to 2.1x (the product of FPU, `-O3` and cache alone would be about 5.7x); together they give 18.9x. A likely explanation: at the default optimization level the FPU waits on loads and stores to the stack, and with `-O3` but no FPU every operation is a library call, so only the combination keeps the FPU busy.
 - Running the code from RAM was slower (12 to 14 ms) than from flash with the instruction cache (10 ms): on this part, cached flash fetches were faster than fetching code from RAM over the bus.
 - The FPU-on value differs between the two tables (80 ms in the SystemView capture, 90 ms in the combination test) because they come from separate builds; the conclusions do not depend on the difference.
 
 ### 3. Verdict on the Cortex-M33
 
-With the best measured setting the 30-state step takes 10 ms, twice its 5 ms budget. The whole task set needs about **284 %** of the core ([projection.md](../results/cortex-m33-study/projection.md), best measured value for each load), so the requirement cannot be met by tuning: a faster processor class is needed.
+With the best measured setting the 30-state step takes 10 ms, its whole 10 ms slot, with no time left for anything else. The whole task set needs about **142 %** of the core ([projection.md](../results/cortex-m33-study/projection.md), best measured value for each load), so the requirement cannot be met by tuning: a faster processor class is needed.
 
 ### 4. Projection onto candidates
 
@@ -81,9 +83,9 @@ With the best measured setting the 30-state step takes 10 ms, twice its 5 ms bud
 
 | Candidate | Clock | Relative speed per cycle | Projected load (budget 70 %) |
 | --- | ---: | ---: | ---: |
-| STM32U585, Cortex-M33 (measured) | 160 MHz | 1.0 | 284 %, does not fit |
-| STM32H757, Cortex-M7 core | 480 MHz | 1.96 (estimate) | 48 %, fits |
-| ADSP-21569, SHARC+ DSP | 1 GHz | 2.76 (estimate) | 16 %, fits |
+| STM32U585, Cortex-M33 (measured) | 160 MHz | 1.0 | 142 %, does not fit |
+| STM32H757, Cortex-M7 core | 480 MHz | 1.96 (estimate) | 24 %, fits |
+| ADSP-21569, SHARC+ DSP | 1 GHz | 2.76 (estimate) | 8 %, fits |
 
 The per-cycle factors are **estimates**, not measurements: about 2x for the Cortex-M7 over the Cortex-M33 on single-precision matrix code (dual-issue pipeline, faster FPU path, TCM and L1 caches), and higher for the SHARC+ DSP (SIMD floating-point units built for matrix and filter code). They were chosen to explore the design space, and should be replaced by measurements on evaluation boards before a final decision.
 
@@ -93,7 +95,7 @@ A dual-core Cortex-M7 + Cortex-M4 microcontroller was selected as the main proce
 
 ## Lessons
 
-1. Look at the whole task set: the 30-state step alone looked only 2x short of its budget, while all three loads together needed close to 3x the core.
+1. Look at the whole task set: the 30-state step alone just fits its own slot on paper, while all three loads together need about 1.4x the core.
 2. Check the FPU precision of the core before choosing `double`: on a single-precision FPU it costs more than having no FPU.
 3. Measure the combination you will ship. FPU, `-O3` and caches have to be enabled together to see the real cost.
 4. Keep the projection's assumptions visible and replace estimates with measurements as soon as boards are available.

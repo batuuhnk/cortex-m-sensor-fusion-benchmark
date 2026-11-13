@@ -120,9 +120,9 @@ def fig_optimization():
 
 def fig_projection():
     """Projected load per candidate against the 70 % budget."""
-    data = [("STM32U585, Cortex-M33\n160 MHz (measured)", 283.5),
-            ("STM32H757, Cortex-M7\n480 MHz (estimate)", 48.2),
-            ("ADSP-21569, SHARC+\n1 GHz (estimate)", 16.4)]
+    data = [("STM32U585, Cortex-M33\n160 MHz (measured)", 141.7),
+            ("STM32H757, Cortex-M7\n480 MHz (estimate)", 24.1),
+            ("ADSP-21569, SHARC+\n1 GHz (estimate)", 8.2)]
     budget = 70.0
     fig, ax = plt.subplots(figsize=(10, 3.2), facecolor=SURFACE)
     y = list(range(len(data)))[::-1]
@@ -137,11 +137,11 @@ def fig_projection():
                 va="center", fontsize=9, color=TEXT)
     ax.set_yticks(y)
     ax.set_yticklabels([d[0] for d in data])
-    ax.set_xlim(0, 340)
+    ax.set_xlim(0, 200)
     ax.set_xlabel("projected CPU load of the task set (% of one core)")
     style(ax)
     title(fig, "Projected load of the task set per processor",
-          "Kalman 30 states at 200 Hz + Kalman 15 states at 20 Hz + optimization loop at 50 Hz")
+          "Kalman 30 states at 100 Hz + Kalman 15 states at 10 Hz + optimization loop at 25 Hz")
     fig.subplots_adjust(left=0.22, right=0.97, top=0.76, bottom=0.17)
     fig.savefig(os.path.join(OUT, "projection.svg"), facecolor=SURFACE)
     plt.close(fig)

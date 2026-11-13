@@ -17,8 +17,8 @@ flowchart LR
 | --- | --- |
 | **18.9x** | FPU, `-O3` and instruction cache together cut a 30-state Kalman step from 189 ms to 10 ms. Each setting alone gave only 1.3x to 2.1x. |
 | **double is the slowest option** | On a single-precision FPU, double ran slower than float with no FPU at all (270 ms vs 189 ms). |
-| **284 % load** | The full task set needed almost 3 cores' worth of the 160 MHz Cortex-M33: tuning could not close the gap, a faster class was needed. |
-| **Decision** | A dual-core Cortex-M7 + M4 fits the task set at an estimated 48 % on the M7 core, with the M4 free for sensor I/O. |
+| **142 % load** | Even with the best settings the full task set needed 1.4 cores' worth of the 160 MHz Cortex-M33: tuning could not close the gap, a faster class was needed. |
+| **Decision** | A dual-core Cortex-M7 + M4 fits the task set at an estimated 24 % on the M7 core, with the M4 free for sensor I/O. |
 
 ![Optimization combinations](report/figures/optimization_kf30.svg)
 
