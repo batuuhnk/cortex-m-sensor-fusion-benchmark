@@ -1,0 +1,53 @@
+# Example task set for a generic IMU + GNSS navigation filter.
+# The rates are illustrative, not taken from any product. Replace them with
+# your own system's rates and filter size.
+
+# Fraction of the core the fusion tasks may use; the rest is margin for
+# drivers, communication, logging and future growth.
+budget = 0.7
+
+# Each task points at a benchmark case and parameter from the measured CSV.
+# `calls` multiplies the case if a task runs it several times per cycle.
+
+[[tasks]]
+name = "Attitude integration (IMU loop)"
+case = "quat_propagate"
+param = "10"          # 10 integration steps per call
+rate_hz = 100         # = 1 kHz IMU, processed in batches of 10
+
+[[tasks]]
+name = "Covariance prediction, 15 states"
+case = "ekf_predict_f32"
+param = "15"
+rate_hz = 200
+
+[[tasks]]
+name = "GNSS update, 6 measurements"
+case = "ekf_update_f32"
+param = "n15_m6"
+rate_hz = 10
+
+[[tasks]]
+name = "Scalar math (navigation equations, housekeeping)"
+case = "scalar_f32"
+param = "100"
+rate_hz = 200
+
+# Candidate processors. relative_perf compares one candidate cycle with one
+# reference-core cycle for this workload (1.0 = same core design). Fill it in
+# from measurements on the candidate or from a comparable published benchmark.
+
+[[candidates]]
+name = "Reference core at its own clock"
+clock_mhz = 160
+relative_perf = 1.0
+
+[[candidates]]
+name = "Same core design at a higher clock"
+clock_mhz = 250
+relative_perf = 1.0
+
+[[candidates]]
+name = "Higher-performance core (example values)"
+clock_mhz = 480
+relative_perf = 1.6
