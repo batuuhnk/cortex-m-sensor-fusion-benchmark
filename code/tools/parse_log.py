@@ -8,7 +8,7 @@ a CSV header line and one line per case. Lines from other firmware output are
 ignored, so a raw terminal capture works.
 
 Usage:
-    python3 parse_log.py logs/O0_nofpu.txt logs/O3_fpu.txt logs/O3_fpu_cache.txt \
+    python3 code/tools/parse_log.py logs/O0_nofpu.txt logs/O3_fpu.txt logs/O3_fpu_cache.txt \
         --out results/ --md results/summary.md
 
 The first log is the baseline: the table shows every run's minimum cycle count

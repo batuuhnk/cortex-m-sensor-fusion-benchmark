@@ -5,7 +5,7 @@ Works on any STM32 with a Cortex-M3/M4/M7/M33/M55 core (DWT cycle counter). Test
 ## 1. Add the files to a CubeIDE project
 
 1. Create a project for your board in STM32CubeIDE, set the system clock, and enable one UART (or SWO) for the log.
-2. Copy `bench/` and `port/stm32/bench_port_stm32.c` into the project and add `bench/` to the include paths.
+2. Copy `code/harness/` and `code/port/stm32/bench_port_stm32.c` into the project and add the harness folder to the include paths.
 3. In `main.c`, after the clock and UART are initialized:
 
    ```c
@@ -19,7 +19,7 @@ Works on any STM32 with a Cortex-M3/M4/M7/M33/M55 core (DWT cycle counter). Test
 4. Log output: add `BENCH_UART=huart2` (your handle) to the preprocessor symbols, or retarget `printf` and leave it out.
 5. Add `BENCH_OPT="O3"` (matching the optimization level) to the preprocessor symbols so the log records it.
 
-The static buffers need about 64 KB of RAM (float and double 32 x 32 matrices). Reduce `WL_MAX_N` in `workloads.h` on smaller parts.
+The static buffers need about 64 KB of RAM (float and double 32 x 32 matrices). Reduce `WL_MAX_N` in `code/harness/workloads.h` on smaller parts.
 
 ## 2. Run the configuration matrix
 
@@ -48,9 +48,9 @@ case,param,reps,min_cycles,avg_cycles,max_cycles,min_us,cpu_hz,fpu,opt,cache,che
 ## 3. Turn the logs into results
 
 ```bash
-python3 tools/parse_log.py logs/O0_soft.txt logs/O0_fpu.txt logs/O3_fpu.txt logs/O3_fpu_cache.txt \
+python3 code/tools/parse_log.py logs/O0_soft.txt logs/O0_fpu.txt logs/O3_fpu.txt logs/O3_fpu_cache.txt \
     --out results/<board> --md results/<board>/summary.md
-python3 tools/project_load.py results/<board>/O3_fpu_cache.csv tools/example_taskset.toml \
+python3 code/tools/project_load.py results/<board>/O3_fpu_cache.csv code/tools/example_taskset.toml \
     --md results/<board>/projection.md
 ```
 

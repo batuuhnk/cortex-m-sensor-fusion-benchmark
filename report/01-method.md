@@ -6,6 +6,18 @@ The processor of a navigation computer has to be chosen early, often before the 
 
 ## The idea
 
+```mermaid
+flowchart LR
+    A[Real-time tasks<br/>and their rates] --> B[Dummy workload<br/>per task]
+    B --> C[Time each workload alone<br/>DWT / SystemView]
+    C --> D{Repeat per setting<br/>FPU, -O, cache,<br/>float vs double}
+    D --> E[Cycles per call<br/>per task]
+    E --> F[Project onto candidates<br/>load = sum of rate x cycles<br/>/ clock x relative perf]
+    F --> G{Below the<br/>budget?}
+    G -- yes --> H[Candidate fits]
+    G -- no --> I[Faster class, lower rate<br/>or split across cores]
+```
+
 1. **Split the system into its real-time tasks** and give each one a rate: IMU integration at the IMU rate, covariance prediction at the filter rate, measurement updates at the aiding rate, and so on.
 2. **Write a synthetic workload per task** that does the same operations with the same dimensions: the same matrix sizes, the same number of square roots and divisions, single or double precision. It does not need to compute a correct navigation solution, only the correct amount and kind of arithmetic.
 3. **Time each workload on its own** on a cheap reference board with the DWT cycle counter. Isolation makes the cost of each task clear and keeps scheduling and interrupts out of the measurement.
@@ -40,5 +52,5 @@ The combination of FPU + optimization + cache is not additive: measure the combi
 ## From the projection to a decision
 
 - A candidate **fits** when the projected load is below the budget with the shipping build settings.
-- If **no single core fits**, look at the per-task table: if one task dominates (usually the covariance prediction at a high filter rate), reduce its rate, split the filter (e.g. error-state with a slower covariance update), or move the high-rate front end to a second core or processor. See [dual-processor patterns](03-dual-processor-pattern.md).
+- If **no single core fits**, look at the per-task table: if one task dominates (usually the covariance prediction at a high filter rate), reduce its rate, split the filter (e.g. error-state with a slower covariance update), or move the high-rate front end to a second core or processor. See [dual-processor patterns](04-dual-processor-patterns.md).
 - `relative_perf` is the weakest input. Fill it in from the same harness run on a candidate evaluation board whenever possible; a CoreMark/MHz ratio is only a rough guide for floating-point matrix code.

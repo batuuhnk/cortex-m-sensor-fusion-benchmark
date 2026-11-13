@@ -1,6 +1,6 @@
-# Original study: processor selection for a navigation filter
+# 2. Study: processor selection for a navigation filter on a Cortex-M33
 
-This folder holds my first application of the method: the dummy loads, the code that ran them, and the measurements, on an STM32U585 (Cortex-M33). The numbers here were produced **by the code in this folder**, not by the harness in `bench/`, which was written later as a cleaner, reusable version.
+My first application of the method: the dummy loads, the code that ran them, and the measurements, on an STM32U585 (Cortex-M33). The numbers here were produced **by the study code in [`code/study/`](../code/study/)**, not by the harness in [`code/harness/`](../code/harness/), which was written later as a cleaner, reusable version.
 
 ## Question
 
@@ -14,7 +14,7 @@ Can a 160 MHz Cortex-M33 run the filter task set below at the required rates, an
 
 ## Loads
 
-Written first in MATLAB ([`matlab/`](matlab/)), then ported to C ([`src/dummy_kf.c`](src/dummy_kf.c)):
+Written first in MATLAB ([`code/study/matlab/`](../code/study/matlab/)), then ported to C ([`code/study/dummy_kf.c`](../code/study/dummy_kf.c)):
 
 - **`dummy_kf`**: one linear Kalman filter step on random data with S states and one scalar measurement, including an S x S matrix inverse (Gauss-Jordan). The inverse and the covariance prediction `A P A^T + Q` dominate the cost (O(S^3)).
 - **`opt_sim`**: a small constrained optimization by gradient descent with a quadratic penalty: scalar, branch-heavy code with up to 2000 iterations.
@@ -26,7 +26,7 @@ The values are random and the outputs have no physical meaning; only the amount 
 | Item | Value |
 | --- | --- |
 | MCU | STM32U585, Arm Cortex-M33 at 160 MHz, single-precision FPU |
-| RTOS | FreeRTOS (CMSIS-RTOS v2), one task per load ([`src/freertos_task_example.c`](src/freertos_task_example.c)) |
+| RTOS | FreeRTOS (CMSIS-RTOS v2), one task per load ([`freertos_task_example.c`](../code/study/freertos_task_example.c)) |
 | Measurement | SEGGER SystemView task statistics (run time per activation, min/max over all activations) |
 | Compiler | Arm GCC |
 
@@ -34,7 +34,9 @@ The values are random and the outputs have no physical meaning; only the amount 
 
 ### 1. Data type and FPU (SystemView captures)
 
-Minimum run time per activation, from [`results/systemview_captures.csv`](results/systemview_captures.csv):
+![Data type and FPU](figures/type_fpu.svg)
+
+Minimum run time per activation, from [`systemview_captures.csv`](../results/cortex-m33-study/systemview_captures.csv):
 
 | Load | double | float, FPU on | float, FPU off |
 | --- | ---: | ---: | ---: |
@@ -48,7 +50,9 @@ Minimum run time per activation, from [`results/systemview_captures.csv`](result
 
 ### 2. Optimization combinations, Kalman 30 states
 
-From [`results/optimization_kf30.csv`](results/optimization_kf30.csv):
+![Optimization combinations](figures/optimization_kf30.svg)
+
+From [`optimization_kf30.csv`](../results/cortex-m33-study/optimization_kf30.csv):
 
 | Configuration | Run time | Speed-up |
 | --- | ---: | ---: |
@@ -67,11 +71,13 @@ From [`results/optimization_kf30.csv`](results/optimization_kf30.csv):
 
 ### 3. Verdict on the Cortex-M33
 
-With the best measured setting the 30-state step takes 10 ms, twice its 5 ms budget. The whole task set needs about **284 %** of the core (results/projection.md, best measured value for each load), so the requirement cannot be met by tuning: a faster processor class is needed.
+With the best measured setting the 30-state step takes 10 ms, twice its 5 ms budget. The whole task set needs about **284 %** of the core ([projection.md](../results/cortex-m33-study/projection.md), best measured value for each load), so the requirement cannot be met by tuning: a faster processor class is needed.
 
 ### 4. Projection onto candidates
 
-[`results/projection.md`](results/projection.md) was produced with `tools/project_load.py`:
+![Projected load](figures/projection.svg)
+
+[`projection.md`](../results/cortex-m33-study/projection.md) was produced with `code/tools/project_load.py`:
 
 | Candidate | Clock | Relative speed per cycle | Projected load (budget 70 %) |
 | --- | ---: | ---: | ---: |
@@ -83,7 +89,7 @@ The per-cycle factors are **estimates**, not measurements: about 2x for the Cort
 
 ### 5. Outcome
 
-A dual-core Cortex-M7 + Cortex-M4 microcontroller was selected as the main processor: the projection leaves margin within the 70 % budget on the M7 core alone, the M4 core can take the sensor I/O ([dual-processor patterns](../docs/03-dual-processor-pattern.md)), and it keeps a single toolchain and a familiar ecosystem. A floating-point DSP stayed on the list as the option for larger filters or higher rates.
+A dual-core Cortex-M7 + Cortex-M4 microcontroller was selected as the main processor: the projection leaves margin within the 70 % budget on the M7 core alone, the M4 core can take the sensor I/O ([dual-processor patterns](04-dual-processor-patterns.md)), and it keeps a single toolchain and a familiar ecosystem. A floating-point DSP stayed on the list as the option for larger filters or higher rates.
 
 ## Lessons
 
@@ -96,11 +102,11 @@ A dual-core Cortex-M7 + Cortex-M4 microcontroller was selected as the main proce
 
 | Path | Content |
 | --- | --- |
-| `matlab/dummy_kf.m`, `matlab/opt_sim.m` | MATLAB versions of the loads |
-| `src/dummy_kf.c`, `src/dummy_kf.h` | C port used on the target (S and the data type set at compile time) |
-| `src/freertos_task_example.c` | FreeRTOS task and SystemView stack watermark hook used to run each load |
-| `results/systemview_captures.csv` | SystemView run-time statistics per load, data type and FPU setting |
-| `results/optimization_kf30.csv` | Optimization combinations for the 30-state load |
-| `results/best_measured.csv`, `results/taskset_study.toml`, `results/projection.md` | Input and output of the load projection |
+| `code/study/matlab/dummy_kf.m`, `opt_sim.m` | MATLAB versions of the loads |
+| `code/study/dummy_kf.c`, `dummy_kf.h` | C port used on the target (S and the data type set at compile time) |
+| `code/study/freertos_task_example.c` | FreeRTOS task and SystemView stack watermark hook used to run each load |
+| `results/cortex-m33-study/systemview_captures.csv` | SystemView run-time statistics per load, data type and FPU setting |
+| `results/cortex-m33-study/optimization_kf30.csv` | Optimization combinations for the 30-state load |
+| `results/cortex-m33-study/best_measured.csv`, `taskset_study.toml`, `projection.md` | Input and output of the load projection |
 
 The C port in this repository fixes a copy bug in the matrix inverse of the measured version (the matrix was not copied into the augmented working array). For a non-singular matrix the fixed code performs the same operations, so the run times are expected to be equivalent.

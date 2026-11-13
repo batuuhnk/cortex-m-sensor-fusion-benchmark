@@ -1,5 +1,5 @@
 build/
 *.o
-host/bench_host
+code/host/bench_host
 __pycache__/
 *.pyc

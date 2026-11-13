@@ -1,4 +1,4 @@
-# 3. Dual-processor and dual-core architecture patterns
+# 4. Dual-processor and dual-core architecture patterns
 
 When one core cannot run the whole task set within budget, or when hard real-time sensor handling has to be isolated from the filter, the work is split across two cores (one dual-core chip) or two processors. This page describes the general patterns; it is not the design of any specific product.
 

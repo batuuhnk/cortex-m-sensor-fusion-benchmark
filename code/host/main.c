@@ -7,8 +7,8 @@
 #include <stdint.h>
 #include <time.h>
 
-#include "../bench/bench_runner.h"
-#include "../bench/bench_timer.h"
+#include "../harness/bench_runner.h"
+#include "../harness/bench_timer.h"
 
 /* Emulated 1 GHz "cycle" counter from the monotonic clock (1 tick = 1 ns). */
 void bench_timer_init(void) {}

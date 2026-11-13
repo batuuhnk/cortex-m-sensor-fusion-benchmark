@@ -5,9 +5,9 @@
 OPT    ?= O2
 CC     ?= gcc
 CFLAGS  = -std=c11 -$(OPT) -Wall -Wextra -Wpedantic -Wconversion -Wshadow -D_POSIX_C_SOURCE=199309L -DBENCH_OPT=\"$(OPT)\"
-SRC     = main.c ../bench/bench_runner.c ../bench/workloads.c
+SRC     = main.c ../harness/bench_runner.c ../harness/workloads.c
 
-bench_host: $(SRC) ../bench/*.h
+bench_host: $(SRC) ../harness/*.h
 	$(CC) $(CFLAGS) -o $@ $(SRC) -lm
 
 run: bench_host

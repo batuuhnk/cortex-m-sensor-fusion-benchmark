@@ -11,8 +11,9 @@ matches the workload, ideally by running this harness on the candidate too;
 CoreMark/MHz ratios are a rough fallback for integer-heavy code only.
 
 Usage:
-    python3 project_load.py results/O3_fpu_cache.csv tools/example_taskset.toml
-    python3 project_load.py results/O3_fpu_cache.csv tools/example_taskset.toml --md results/projection.md
+    python3 code/tools/project_load.py results/<board>/O3_fpu_cache.csv code/tools/example_taskset.toml
+    python3 code/tools/project_load.py results/cortex-m33-study/best_measured.csv \
+        results/cortex-m33-study/taskset_study.toml --md results/cortex-m33-study/projection.md
 """
 import argparse
 import csv

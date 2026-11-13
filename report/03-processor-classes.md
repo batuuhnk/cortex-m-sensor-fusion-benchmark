@@ -1,4 +1,4 @@
-# 2. Processor classes and selection criteria
+# 3. Processor classes and selection criteria
 
 Raw speed is only one of the criteria. For an embedded navigation computer the decision usually comes down to the list below; the benchmark answers the first point, the rest come from the system requirements and the team.
 
@@ -31,6 +31,6 @@ Check every figure against the current datasheet of the exact part number; famil
 ## Using the class table with the benchmark
 
 1. Measure on a cheap reference board from the first row (for example a Cortex-M33 board).
-2. Project onto one representative part per class with `tools/project_load.py`.
+2. Project onto one representative part per class with `code/tools/project_load.py`.
 3. Eliminate the classes that do not fit the budget, then compare the remaining ones on the other criteria.
 4. Confirm the top candidate by running the same harness on its evaluation board, and replace the estimated `relative_perf` with the measured value.
