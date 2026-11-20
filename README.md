@@ -2,6 +2,8 @@
 
 **Choosing a processor for a real-time sensor fusion system before the hardware exists:** write dummy workloads that do the same arithmetic as each filter task, time them on a cheap Cortex-M board, and project the load onto candidate processors.
 
+> **Start here:** 📄 [Study report](report/02-cortex-m33-study.md) · 🧭 [Method](report/01-method.md) · 📊 [Results](results/cortex-m33-study) · 💻 [Code](code)
+
 ```mermaid
 flowchart LR
     A["1. Tasks and rates<br/>Kalman steps, IMU loop,<br/>scalar math"] --> B["2. Dummy workloads<br/>same operations,<br/>same dimensions"]
@@ -83,3 +85,7 @@ Batuhan Kılıçlı, embedded software engineer (defense and avionics).
 [LinkedIn](https://linkedin.com/in/batuhankilicli) | [GitHub](https://github.com/batuuhnk)
 
 MIT License.
+
+---
+
+[← Back to profile](https://github.com/batuuhnk) · More: [cortex-m-sensor-fusion-benchmark](https://github.com/batuuhnk/cortex-m-sensor-fusion-benchmark) · [px4-sitl-learning](https://github.com/batuuhnk/px4-sitl-learning) · [cpp-temelleri](https://github.com/batuuhnk/cpp-temelleri) · [embedded-handbook](https://github.com/batuuhnk/embedded-handbook)
